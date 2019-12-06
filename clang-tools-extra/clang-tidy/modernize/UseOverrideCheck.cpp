@@ -21,12 +21,14 @@ UseOverrideCheck::UseOverrideCheck(StringRef Name, ClangTidyContext *Context)
     : ClangTidyCheck(Name, Context),
       IgnoreDestructors(Options.get("IgnoreDestructors", false)),
       AllowOverrideAndFinal(Options.get("AllowOverrideAndFinal", false)),
+      AllowVirtualAndOverride(Options.get("AllowVirtualAndOverride", false)),
       OverrideSpelling(Options.get("OverrideSpelling", "override")),
       FinalSpelling(Options.get("FinalSpelling", "final")) {}
 
 void UseOverrideCheck::storeOptions(ClangTidyOptions::OptionMap &Opts) {
   Options.store(Opts, "IgnoreDestructors", IgnoreDestructors);
   Options.store(Opts, "AllowOverrideAndFinal", AllowOverrideAndFinal);
+  Options.store(Opts, "AllowVirtualAndOverride", AllowVirtualAndOverride);
   Options.store(Opts, "OverrideSpelling", OverrideSpelling);
   Options.store(Opts, "FinalSpelling", FinalSpelling);
 }
@@ -106,7 +108,8 @@ void UseOverrideCheck::check(const MatchFinder::MatchResult &Result) {
   unsigned KeywordCount = HasVirtual + HasOverride + HasFinal;
 
   if ((!OnlyVirtualSpecified && KeywordCount == 1) ||
-      (!HasVirtual && HasOverride && HasFinal && AllowOverrideAndFinal))
+      (!HasVirtual && HasOverride && HasFinal && AllowOverrideAndFinal) ||
+      (HasVirtual && HasOverride && AllowVirtualAndOverride))
     return; // Nothing to do.
 
   std::string Message;

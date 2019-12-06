@@ -27,6 +27,7 @@ public:
 private:
   const bool IgnoreDestructors;
   const bool AllowOverrideAndFinal;
+  const bool AllowVirtualAndOverride;
   const std::string OverrideSpelling;
   const std::string FinalSpelling;
 };
