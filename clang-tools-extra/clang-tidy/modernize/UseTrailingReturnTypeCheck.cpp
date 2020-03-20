@@ -395,6 +395,10 @@ void UseTrailingReturnTypeCheck::check(const MatchFinder::MatchResult &Result) {
   if (F->getLocation().isInvalid())
     return;
 
+  QualType QT = F->getDeclaredReturnType();
+  if (IgnoreTrivialTypes && QT.isTrivialType(*Result.Context))
+    return;
+
   // TODO: implement those
   if (F->getDeclaredReturnType()->isFunctionPointerType() ||
       F->getDeclaredReturnType()->isMemberFunctionPointerType() ||

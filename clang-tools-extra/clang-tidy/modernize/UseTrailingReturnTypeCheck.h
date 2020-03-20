@@ -29,7 +29,8 @@ struct ClassifiedToken {
 class UseTrailingReturnTypeCheck : public ClangTidyCheck {
 public:
   UseTrailingReturnTypeCheck(StringRef Name, ClangTidyContext *Context)
-      : ClangTidyCheck(Name, Context) {}
+      : ClangTidyCheck(Name, Context)
+      , IgnoreTrivialTypes(Options.get("IgnoreTrivialTypes", false)) {}
   bool isLanguageVersionSupported(const LangOptions &LangOpts) const override {
     return LangOpts.CPlusPlus11;
   }
@@ -40,6 +41,7 @@ public:
 
 private:
   Preprocessor *PP = nullptr;
+  const bool IgnoreTrivialTypes;
 
   SourceLocation findTrailingReturnTypeSourceLocation(
       const FunctionDecl &F, const FunctionTypeLoc &FTL, const ASTContext &Ctx,
