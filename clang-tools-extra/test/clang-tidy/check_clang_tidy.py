@@ -135,7 +135,7 @@ def run_test_once(args, extra_args):
   original_file_name = temp_file_name + ".orig"
   write_file(original_file_name, cleaned_test)
 
-  args = ['clang-tidy', temp_file_name, '-fix', '--checks=-*,' + check_name] + \
+  args = ['./clang-tidy', temp_file_name, '-fix', '--checks=-*,' + check_name] + \
       clang_tidy_extra_args + ['--'] + clang_extra_args
   if expect_clang_tidy_error:
     args.insert(0, 'not')
@@ -165,7 +165,7 @@ def run_test_once(args, extra_args):
   if has_check_fixes:
     try:
       subprocess.check_output(
-          ['FileCheck', '-input-file=' + temp_file_name, input_file_name,
+          ['./FileCheck', '-input-file=' + temp_file_name, input_file_name,
            '-check-prefixes=' + ','.join(check_fixes_prefixes),
            '-strict-whitespace'],
           stderr=subprocess.STDOUT)
@@ -178,7 +178,7 @@ def run_test_once(args, extra_args):
     write_file(messages_file, clang_tidy_output)
     try:
       subprocess.check_output(
-          ['FileCheck', '-input-file=' + messages_file, input_file_name,
+          ['./FileCheck', '-input-file=' + messages_file, input_file_name,
            '-check-prefixes=' + ','.join(check_messages_prefixes),
            '-implicit-check-not={{warning|error}}:'],
           stderr=subprocess.STDOUT)
