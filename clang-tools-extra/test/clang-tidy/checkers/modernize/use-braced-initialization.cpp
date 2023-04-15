@@ -32,7 +32,7 @@ void f(){
     S a(0); // flag
     S b = 0; // pass
     S c{0}; // pass
-    S d; // indecisive
+    S d; // pass
     S e{}; // pass
 }
 

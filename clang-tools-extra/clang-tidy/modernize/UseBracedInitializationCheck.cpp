@@ -16,7 +16,7 @@ namespace clang::tidy::modernize {
 
 void UseBracedInitializationCheck::registerMatchers(MatchFinder *Finder) {
   // auch möglicherweise interessant: hasSyntacticForm, isListInitialization, cxxStdInitializerListExpr
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(parmVarDecl()))).bind("var"), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(parmVarDecl()), unless(has(cxxConstructExpr(argumentCountIs(0)))))).bind("var"), this);
   Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(withInitializer(initListExpr())))).bind("ctor"), this);
   Finder->addMatcher(fieldDecl(hasInClassInitializer(unless(initListExpr()))).bind("field"), this);
 }
