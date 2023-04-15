@@ -53,7 +53,7 @@ void UseBracedInitializationCheck::checkVarDecl(const VarDecl *Var) {
 }
 
 void UseBracedInitializationCheck::checkField(const FieldDecl *Field) {
-  diag(Field->getLocation(), "Found Field Declaration");
+  diag(Field->getLocation(), "Use braced initialization in field declaration");
 }
 
 } // namespace clang::tidy::modernize
