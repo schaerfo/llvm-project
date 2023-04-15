@@ -15,6 +15,24 @@
 
 int getInt();
 
+struct Base {
+  Base() = default;
+  Base(float);
+  Base(double);
+};
+
+struct Derived: Base {
+  Derived(float f) : Base(f) {} // flag
+  Derived(double d) : Base{d} {} // pass
+};
+
+struct M {
+    M(float f): b_(f) {} // flag
+    M(double d): b_{d} {} // pass
+
+    Base b_;
+};
+
 struct S {
     S() = default;
     S(int i): i_(i) {} // flag
