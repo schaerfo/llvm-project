@@ -30,15 +30,15 @@ struct S {
 
 void f(){
     S a(0); // flag
-    S b = 0; // flag
+    S b = 0; // pass
     S c{0}; // pass
     S d; // indecisive
-    S e{}; // indecisive
+    S e{}; // pass
 }
 
 void g() {
     int a(0); // flag
-    int b = 0; // flag
+    int b = 0; // pass
     int c{0}; // pass
-    int d; // indecisive
+    int d; // pass
 }

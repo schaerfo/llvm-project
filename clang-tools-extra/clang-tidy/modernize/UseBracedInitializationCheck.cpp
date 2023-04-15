@@ -45,11 +45,8 @@ void UseBracedInitializationCheck::checkCtorInitializer(
 }
 
 void UseBracedInitializationCheck::checkVarDecl(const VarDecl *Var) {
-  if (Var->getInitStyle() == VarDecl::InitializationStyle::ListInit)
-    return;
-  if (!Var->hasInit())
-    return;
-  diag(Var->getLocation(), "Use braced initialization in variable initialization");
+  if (Var->getInitStyle() == VarDecl::InitializationStyle::CallInit)
+    diag(Var->getLocation(), "Use braced initialization in variable initialization");
 }
 
 void UseBracedInitializationCheck::checkField(const FieldDecl *Field) {
