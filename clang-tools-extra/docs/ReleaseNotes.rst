@@ -142,6 +142,11 @@ New checks
   Converts standard library type traits of the form ``traits<...>::type`` and
   ``traits<...>::value`` into ``traits_t<...>`` and ``traits_v<...>`` respectively.
 
+- New :doc:`modernize-use-braced-initialization
+  <clang-tidy/checks/modernize/use-braced-initialization>` check.
+
+  FIXME: add release notes.
+
 - New :doc:`readability-avoid-unconditional-preprocessor-if
   <clang-tidy/checks/readability/avoid-unconditional-preprocessor-if>` check.
 
