@@ -60,3 +60,10 @@ void g() {
     int c{0}; // pass
     int d; // pass
 }
+
+void take(S s);
+
+void h(){
+  take(S()); // flag
+  take(S{}); // pass
+}
