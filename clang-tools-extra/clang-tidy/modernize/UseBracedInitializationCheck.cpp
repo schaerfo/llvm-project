@@ -15,18 +15,36 @@ using namespace clang::ast_matchers;
 namespace clang::tidy::modernize {
 
 void UseBracedInitializationCheck::registerMatchers(MatchFinder *Finder) {
-  // auch möglicherweise interessant: hasSyntacticForm, isListInitialization, cxxStdInitializerListExpr
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(anyOf(parmVarDecl(), has(cxxConstructExpr(argumentCountIs(0))))))).bind("var"), this);
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(anyOf(withInitializer(initListExpr()),
-                                                                                 withInitializer(cxxConstructExpr()))))).bind("ctor"), this);
-  Finder->addMatcher(fieldDecl(hasInClassInitializer(unless(initListExpr()))).bind("field"), this);
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxConstructExpr(unless(anyOf(isListInitialization(),
-                                                                               hasParent(varDecl())))).bind("construct")), this);
+  // auch möglicherweise interessant: hasSyntacticForm, isListInitialization,
+  // cxxStdInitializerListExpr
+  Finder->addMatcher(
+      traverse(TK_IgnoreUnlessSpelledInSource,
+               varDecl(unless(anyOf(
+                   parmVarDecl(), has(cxxConstructExpr(argumentCountIs(0)))))))
+          .bind("var"),
+      this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource,
+                              cxxCtorInitializer(unless(
+                                  anyOf(withInitializer(initListExpr()),
+                                        withInitializer(cxxConstructExpr())))))
+                         .bind("ctor"),
+                     this);
+  Finder->addMatcher(
+      fieldDecl(hasInClassInitializer(unless(initListExpr()))).bind("field"),
+      this);
+  Finder->addMatcher(
+      traverse(TK_IgnoreUnlessSpelledInSource,
+               cxxConstructExpr(
+                   unless(anyOf(isListInitialization(), hasParent(varDecl()))))
+                   .bind("construct")),
+      this);
 }
 
-void UseBracedInitializationCheck::check(const MatchFinder::MatchResult &Result) {
+void UseBracedInitializationCheck::check(
+    const MatchFinder::MatchResult &Result) {
   const auto *MatchedVarDecl = Result.Nodes.getNodeAs<VarDecl>("var");
-  const auto *MatchedCtorInitializer = Result.Nodes.getNodeAs<CXXCtorInitializer>("ctor");
+  const auto *MatchedCtorInitializer =
+      Result.Nodes.getNodeAs<CXXCtorInitializer>("ctor");
   const auto *Field = Result.Nodes.getNodeAs<FieldDecl>("field");
   const auto *Construct = Result.Nodes.getNodeAs<CXXConstructExpr>("construct");
 
@@ -49,12 +67,14 @@ void UseBracedInitializationCheck::check(const MatchFinder::MatchResult &Result)
 
 void UseBracedInitializationCheck::checkCtorInitializer(
     const CXXCtorInitializer *Initializer) {
-  diag(Initializer->getSourceLocation(), "Use braced initialization in constructor initializer");
+  diag(Initializer->getSourceLocation(),
+       "Use braced initialization in constructor initializer");
 }
 
 void UseBracedInitializationCheck::checkVarDecl(const VarDecl *Var) {
   if (Var->getInitStyle() == VarDecl::InitializationStyle::CallInit)
-    diag(Var->getLocation(), "Use braced initialization in variable initialization");
+    diag(Var->getLocation(),
+         "Use braced initialization in variable initialization");
 }
 
 void UseBracedInitializationCheck::checkField(const FieldDecl *Field) {
@@ -63,7 +83,8 @@ void UseBracedInitializationCheck::checkField(const FieldDecl *Field) {
 
 void UseBracedInitializationCheck::checkConstruct(
     const CXXConstructExpr *Construct) {
-  diag(Construct->getLocation(), "Use braced initialization in object construction");
+  diag(Construct->getLocation(),
+       "Use braced initialization in object construction");
 }
 
 } // namespace clang::tidy::modernize
