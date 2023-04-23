@@ -31,6 +31,8 @@ struct Derived: Base {
 struct M {
     M(float f): b_(f) {} // flag
     M(double d): b_{d} {} // pass
+    M(): b_() {} // flag
+    M(int): b_{} {} // pass
 
     Base b_;
     Default d_;
