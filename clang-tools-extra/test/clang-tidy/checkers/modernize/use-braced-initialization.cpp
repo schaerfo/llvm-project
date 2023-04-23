@@ -21,6 +21,8 @@ struct Base {
   Base(double);
 };
 
+struct Default {};
+
 struct Derived: Base {
   Derived(float f) : Base(f) {} // flag
   Derived(double d) : Base{d} {} // pass
@@ -31,6 +33,7 @@ struct M {
     M(double d): b_{d} {} // pass
 
     Base b_;
+    Default d_;
 };
 
 struct S {
