@@ -16,12 +16,12 @@ namespace clang::tidy::modernize {
 
 void UseBracedInitializationCheck::registerMatchers(MatchFinder *Finder) {
   // auch möglicherweise interessant: hasSyntacticForm, isListInitialization, cxxStdInitializerListExpr
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(parmVarDecl()), unless(has(cxxConstructExpr(argumentCountIs(0)))))).bind("var"), this);
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(withInitializer(initListExpr())),
-                                                                                 unless(withInitializer(cxxConstructExpr())))).bind("ctor"), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(anyOf(parmVarDecl(), has(cxxConstructExpr(argumentCountIs(0))))))).bind("var"), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(anyOf(withInitializer(initListExpr()),
+                                                                                 withInitializer(cxxConstructExpr()))))).bind("ctor"), this);
   Finder->addMatcher(fieldDecl(hasInClassInitializer(unless(initListExpr()))).bind("field"), this);
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxConstructExpr(unless(isListInitialization()),
-                                                                               unless(hasParent(varDecl()))).bind("construct")), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxConstructExpr(unless(anyOf(isListInitialization(),
+                                                                               hasParent(varDecl())))).bind("construct")), this);
 }
 
 void UseBracedInitializationCheck::check(const MatchFinder::MatchResult &Result) {
