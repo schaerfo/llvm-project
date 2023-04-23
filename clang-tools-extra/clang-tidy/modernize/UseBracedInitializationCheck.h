@@ -28,6 +28,7 @@ private:
   void checkVarDecl(const VarDecl *Var);
   void checkCtorInitializer(const CXXCtorInitializer *Initializer);
   void checkField(const FieldDecl *Field);
+  void checkConstruct(const CXXConstructExpr *Construct);
 };
 
 } // namespace clang::tidy::modernize

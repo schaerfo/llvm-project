@@ -17,14 +17,18 @@ namespace clang::tidy::modernize {
 void UseBracedInitializationCheck::registerMatchers(MatchFinder *Finder) {
   // auch möglicherweise interessant: hasSyntacticForm, isListInitialization, cxxStdInitializerListExpr
   Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, varDecl(unless(parmVarDecl()), unless(has(cxxConstructExpr(argumentCountIs(0)))))).bind("var"), this);
-  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(withInitializer(initListExpr())))).bind("ctor"), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxCtorInitializer(unless(withInitializer(initListExpr())),
+                                                                                 unless(withInitializer(cxxConstructExpr())))).bind("ctor"), this);
   Finder->addMatcher(fieldDecl(hasInClassInitializer(unless(initListExpr()))).bind("field"), this);
+  Finder->addMatcher(traverse(TK_IgnoreUnlessSpelledInSource, cxxConstructExpr(unless(isListInitialization()),
+                                                                               unless(hasParent(varDecl()))).bind("construct")), this);
 }
 
 void UseBracedInitializationCheck::check(const MatchFinder::MatchResult &Result) {
   const auto *MatchedVarDecl = Result.Nodes.getNodeAs<VarDecl>("var");
   const auto *MatchedCtorInitializer = Result.Nodes.getNodeAs<CXXCtorInitializer>("ctor");
   const auto *Field = Result.Nodes.getNodeAs<FieldDecl>("field");
+  const auto *Construct = Result.Nodes.getNodeAs<CXXConstructExpr>("construct");
 
   if (MatchedVarDecl) {
     checkVarDecl(MatchedVarDecl);
@@ -36,6 +40,10 @@ void UseBracedInitializationCheck::check(const MatchFinder::MatchResult &Result)
 
   if (Field) {
     checkField(Field);
+  }
+
+  if (Construct) {
+    checkConstruct(Construct);
   }
 }
 
@@ -51,6 +59,11 @@ void UseBracedInitializationCheck::checkVarDecl(const VarDecl *Var) {
 
 void UseBracedInitializationCheck::checkField(const FieldDecl *Field) {
   diag(Field->getLocation(), "Use braced initialization in field declaration");
+}
+
+void UseBracedInitializationCheck::checkConstruct(
+    const CXXConstructExpr *Construct) {
+  diag(Construct->getLocation(), "Use braced initialization in object construction");
 }
 
 } // namespace clang::tidy::modernize
